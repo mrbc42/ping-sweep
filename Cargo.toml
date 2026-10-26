@@ -1,0 +1,16 @@
+[package]
+name = "ping-sweep"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+slint = "1.8"
+socket2 = { version = "0.5", features = ["all"] }
+if-addrs = "0.13"
+
+[build-dependencies]
+slint-build = "1.8"
+
+[profile.release]
+lto = true
+strip = true

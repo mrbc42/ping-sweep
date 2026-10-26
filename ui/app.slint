@@ -1,0 +1,158 @@
+import { Button, LineEdit, ListView, ProgressIndicator } from "std-widgets.slint";
+
+export struct HostResult {
+    ip: string,
+    alive: bool,
+    rtt: string,
+    ports: string,
+}
+
+export component MainWindow inherits Window {
+    title: "Ping Sweep";
+    background: #0f172a;
+    preferred-width: 560px;
+    preferred-height: 680px;
+    min-width: 420px;
+    min-height: 360px;
+
+    in-out property <string> range;
+    in-out property <string> ports;
+    in property <bool> scanning;
+    in property <float> progress;
+    in property <string> summary: "Enter a range and press Scan.";
+    in property <string> version;
+    in property <[HostResult]> results;
+    // 0 = all, 1 = alive, 2 = no reply
+    in-out property <int> filter: 0;
+    in property <int> alive-count;
+    in property <int> dead-count;
+
+    callback start(string, string);
+    callback common-ports();
+    callback stop();
+    callback set-filter(int);
+
+    VerticalLayout {
+        padding: 16px;
+        spacing: 12px;
+
+        HorizontalLayout {
+            spacing: 8px;
+            LineEdit {
+                text <=> root.range;
+                placeholder-text: "192.168.1.0/24  or  10.0.0.1-10.0.0.50  or  192.168.1.1-254";
+                enabled: !root.scanning;
+                accepted => { root.start(root.range, root.ports); }
+            }
+            Button {
+                text: root.scanning ? "Stop" : "Scan";
+                primary: !root.scanning;
+                clicked => {
+                    if (root.scanning) { root.stop(); } else { root.start(root.range, root.ports); }
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            LineEdit {
+                text <=> root.ports;
+                placeholder-text: "Ports to scan on responding hosts, e.g. 22,80,443 or 8000-8010";
+                enabled: !root.scanning;
+                accepted => { root.start(root.range, root.ports); }
+            }
+            Button {
+                text: "Common";
+                enabled: !root.scanning;
+                clicked => { root.common-ports(); }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            Button {
+                text: "All (" + (root.alive-count + root.dead-count) + ")";
+                primary: root.filter == 0;
+                clicked => { root.set-filter(0); }
+            }
+            Button {
+                text: "Responding (" + root.alive-count + ")";
+                primary: root.filter == 1;
+                clicked => { root.set-filter(1); }
+            }
+            Button {
+                text: "No reply (" + root.dead-count + ")";
+                primary: root.filter == 2;
+                clicked => { root.set-filter(2); }
+            }
+        }
+
+        ProgressIndicator {
+            progress: root.progress;
+        }
+
+        Text {
+            text: root.summary;
+            color: #94a3b8;
+        }
+
+        Rectangle {
+            background: #1e293b;
+            border-radius: 12px;
+            clip: true;
+
+            ListView {
+                for r in root.results : Rectangle {
+                    height: 32px;
+                    HorizontalLayout {
+                        padding-left: 16px;
+                        padding-right: 16px;
+                        spacing: 12px;
+                        Rectangle {
+                            width: 10px;
+                            Rectangle {
+                                width: 10px;
+                                height: 10px;
+                                border-radius: 5px;
+                                background: r.alive ? #22c55e : #ef4444;
+                            }
+                        }
+                        Text {
+                            text: r.ip;
+                            color: #e2e8f0;
+                            vertical-alignment: center;
+                            width: 110px;
+                        }
+                        Text {
+                            text: r.alive ? "alive" : "no reply";
+                            color: r.alive ? #22c55e : #94a3b8;
+                            vertical-alignment: center;
+                            width: 70px;
+                        }
+                        Text {
+                            text: r.rtt;
+                            color: #94a3b8;
+                            vertical-alignment: center;
+                            horizontal-alignment: right;
+                            width: 70px;
+                        }
+                        Text {
+                            text: r.ports;
+                            color: #a5b4fc;
+                            vertical-alignment: center;
+                            overflow: elide;
+                            horizontal-stretch: 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "Ping Sweep v" + root.version;
+            color: #475569;
+            font-size: 11px;
+            horizontal-alignment: right;
+        }
+    }
+}
