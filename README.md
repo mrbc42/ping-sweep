@@ -36,3 +36,8 @@ Windows is not supported yet (it needs a different ping API).
   dropping replies. Try from another machine on the same network.
 - `examples/sweep.rs` and `examples/portcheck.rs` are headless versions of the ping and
   port-scan code for testing without a display.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The app is built with [Slint](https://slint.dev), which has its
+own license terms (GPLv3, royalty-free, or commercial) that apply to built binaries.
