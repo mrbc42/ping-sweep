@@ -1,13 +1,18 @@
 [package]
 name = "ping-sweep"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 
 [dependencies]
 slint = "1.8"
-socket2 = { version = "0.5", features = ["all"] }
 if-addrs = "0.13"
+
+[target.'cfg(unix)'.dependencies]
+socket2 = { version = "0.5", features = ["all"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper"] }
 
 [build-dependencies]
 slint-build = "1.8"

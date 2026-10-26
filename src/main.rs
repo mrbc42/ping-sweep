@@ -1,3 +1,5 @@
+#![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
+
 mod icmp;
 mod network;
 mod ports;
@@ -18,6 +20,10 @@ slint::include_modules!();
 const MAX_HOSTS: u64 = 4096;
 const WORKERS: usize = 64;
 const TIMEOUT: Duration = Duration::from_secs(2);
+// Windows is slower to report refused connections.
+#[cfg(windows)]
+const PORT_TIMEOUT: Duration = Duration::from_millis(1000);
+#[cfg(not(windows))]
 const PORT_TIMEOUT: Duration = Duration::from_millis(700);
 
 /// Accepts `a.b.c.d`, `a.b.c.d/len`, `a.b.c.d-e.f.g.h` and `a.b.c.d-N`

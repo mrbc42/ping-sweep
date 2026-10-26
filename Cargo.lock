@@ -3369,12 +3369,13 @@ checksum = "b330c9d1b92dfe68442ca20b009c717d5f0b1e3cf4965e62f704c3c6e95a1305"
 
 [[package]]
 name = "ping-sweep"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "if-addrs",
  "slint",
  "slint-build",
  "socket2",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]

@@ -19,7 +19,8 @@ It is self-contained: ICMP echo and the port scan are built in, so it does not u
 
     cargo run --release
 
-On Linux you need `libfontconfig1-dev` and `libxkbcommon-dev`.
+On Linux you need `libfontconfig1-dev` and `libxkbcommon-dev`. Windows and macOS need nothing extra.
+Prebuilt Windows and Linux binaries are attached to each CI run under Actions.
 
 ## Permissions
 
@@ -28,7 +29,7 @@ If Linux refuses, run once:
 
     sudo sysctl -w net.ipv4.ping_group_range="0 2147483647"
 
-Windows is not supported yet (it needs a different ping API).
+On Windows no special permissions are needed (it uses the built-in `IcmpSendEcho` API).
 
 ## Notes
 
